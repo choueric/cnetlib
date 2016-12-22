@@ -2,9 +2,12 @@ SRCS=$(wildcard *.c)
 OBJS=$(SRCS:%.c=%.o)
 DEPS=$(SRCS:%.c=%.d)
 
-TARGET=libnet.a
+CFLAGS+=-fPIC
 
-all:$(TARGET)
+STARGET=libcnetlib.a
+DTARGET=libcnetlib.so
+
+all:$(STARGET) $(DTARGET)
 
 $(DEPS):%.d:%.c 
 	@set -e rm -f $@
@@ -14,8 +17,11 @@ $(DEPS):%.d:%.c
 
 -include $(DEPS)
 
-$(TARGET):$(OBJS)
-	ar -r $@ $(OBJS)
+$(STARGET):$(OBJS)
+	$(AR) -r $@ $(OBJS)
+
+$(DTARGET):$(OBJS)
+	$(CC) $(OBJS) -shared -o $(DTARGET)
 
 clean:
-	rm -rf *.d *.o $(TARGET)
+	rm -rf *.d *.o $(STARGET) $(DTARGET)
