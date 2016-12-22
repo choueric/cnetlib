@@ -13,11 +13,6 @@
   printf("\E[32;32m" fmt "\E[32;00m", ##args);\
 }
 
-#define banner() {\
-	printf("===== %s %d ======\n", __FILE__, __LINE__);\
-}
-
-
 typedef enum {
 	TEST_INVALID,
 	TEST_ADDR,
