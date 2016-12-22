@@ -2,6 +2,8 @@ SRCS=$(wildcard *.c)
 OBJS=$(SRCS:%.c=%.o)
 DEPS=$(SRCS:%.c=%.d)
 
+CFLAGS=-Wall -Werror -g -O2 -std=gnu99
+
 CFLAGS+=-fPIC
 
 STARGET=libcnetlib.a

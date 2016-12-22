@@ -6,9 +6,11 @@ LIBS=$(DEPLIBS) -lpthread
 INC=-I..
 CFLAGS=-Wall -Werror -g -O2 -std=gnu99 $(INC)
 
-SRC=test_main.c test_parse_args.c
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:%.c=%.o)
+DEPS=$(SRCS:%.c=%.d)
+
 SUBDIRS=..
-OBJS=$(SRC:%.c=%.o)
 
 export
 
@@ -16,7 +18,7 @@ export
 
 all: subdir $(EXEC)
 
--include $(SRC:%.c=%.d)
+-include $(SRCS:%.c=%.d)
 
 subdir:$(SUBDIRS)
 
@@ -31,6 +33,8 @@ $(DEPS):%.d:%.c
 	$(CC) -MM $(CFLAGS) $< > $@.1234
 	@sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.1234 > $@
 	@rm -f $@.1234
+
+-include $(DEPS)
 
 clean_dirs := $(addprefix _clean_,$(SUBDIRS) )
 
