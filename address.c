@@ -26,7 +26,13 @@ int sa_stoi(const char *str, uint32_t *ip)
 
     ret = inet_pton(AF_INET, str, &addr);
     *ip = ntohl(addr.s_addr);
-    return ret;
+
+	if (ret == 1)
+		return 0;
+	else if (ret == 0)
+		return -2;
+	else
+		return ret;
 }
 
 void sa_set_addr(struct sockaddr *saddr, uint32_t ip)
@@ -72,5 +78,12 @@ const char *sa_ntop(struct sockaddr *saddr, char *str, socklen_t size)
 int sa_pton(const char *str, struct sockaddr *saddr)
 {
     struct sockaddr_in *s = (struct sockaddr_in *)saddr;
-    return inet_pton(AF_INET, str, &(s->sin_addr));
+    int ret = inet_pton(AF_INET, str, &(s->sin_addr));
+
+	if (ret == 1)
+		return 0;
+	else if (ret == 0)
+		return -2;
+	else
+		return ret;
 }

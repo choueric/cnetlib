@@ -43,8 +43,7 @@
 
 
 /*
- * [1]
- * numeric to presentation
+ * [1] numeric to presentation
  * integer to string
  * transfer @IP address (host byte order) to ascii format and store in @str
  * @return: non-NULL pointer to @str when ok; NULL when fail.
@@ -52,28 +51,30 @@
 const char *sa_itos(uint32_t ip, char *str, uint32_t size);
 
 /*
- * [2]
- * presentaion to numeric format
+ * [2] presentaion to numeric format
  * string to integer
  * transfer IP in @str to numeric format and store in @ip
  * @ip is already in host's endian
- * @return: 1, ok; 0, @str is valid; -1, failed, errno is set.
+ * @return: 0, ok; -2, @str is valid; -1, failed, errno is set.
  */
 int sa_stoi(const char *str, uint32_t *ip);
 
 /*
- * [3]
+ * [3] numberic to native
  * @ip: ip address to set, in host's endian format
  */
 void sa_set_addr(struct sockaddr *saddr, uint32_t ip);
 
 /*
- * [3]
+ * [3] number to native
  * @port: port to set, in host's endian format
  */
 void sa_set_port(struct sockaddr *saddr, uint16_t port);
 
-/* [3]*/
+/*
+ * [3] numberic to native
+ * @f: address family, e.g. AF_INET. see kernel/inlcude/linux/socket.h
+ */
 void sa_set_family(struct sockaddr *saddr, sa_family_t f);
 
 /* [4] */
@@ -86,18 +87,16 @@ uint16_t sa_get_port(struct sockaddr *saddr);
 sa_family_t sa_get_family(struct sockaddr *saddr);
 
 /*
- * [5]
- * native to presentation
+ * [5] native to presentation
  * transfer IP address (network byte order) in @saddr to ascii format and store in @str
  * @return: non-NULL pointer to @str when ok; NULL when fail.
  */
 const char *sa_ntop(struct sockaddr *saddr, char *str, socklen_t size);
 
 /*
- * [6]
- * presentaion to native
+ * [6] presentaion to native
  * transfer IP in @str to numeric format and store in @saddr
  * IP in @saddr is network byte order.
- * @return: 1, ok; 0, @str is valid; -1, failed, errno is set.
+ * @return: 0, ok; -2, @str is valid; -1, failed, errno is set.
  */
 int sa_pton(const char *str, struct sockaddr *saddr);
