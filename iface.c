@@ -27,7 +27,7 @@
  * modified from source code of net-tools_1.60
  */
 
-#define PATH_PROCNET_DEV		"/proc/net/dev"
+#define PATH_PROCNET_DEV "/proc/net/dev"
 
 static int open_socket()
 {
