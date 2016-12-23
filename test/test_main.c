@@ -2,11 +2,12 @@
 #include "test_parse_args.h"
 
 #include "address.h"
+#include "iface.h"
 
 #define CHECK_TEST(no, func, ret_check, val_check, print_val) do {\
 	if (ret_check) {\
 		if (val_check) {\
-			ok("["#no"]: OK."#func"(): ");\
+			ok("["#no"]: OK. "#func"(): ");\
 			print_val;\
 		} else {\
 			err("["#no"]: FAIL. "#func"(): ");\
@@ -60,6 +61,74 @@ static int testAddr()
 	return 0;
 }
 
+static int testIface()
+{
+	const char *ifname = "eth0";
+
+	{
+	int n;
+	for (int i = 1;1; i++) {
+		char name[IFNAMSIZ] = {0};
+		if (iface_get_ifname_by_idx(i, name, IFNAMSIZ) != NULL) {
+			printf("%d: %s\n", i, name);
+		} else {
+			n = i - 1;
+			break;
+		}
+	}
+	CHECK_TEST(1, iface_get_ifname_by_idx, 1, 1, printf("there are %d iface(s)\n", n));
+	}
+
+	{
+	struct net_iface ifarray[4];
+	int ret = iface_get_list(ifarray, 4);
+	CHECK_TEST(2, iface_get_list, ret > 0, 1, printf("there are %d iface(s)\n", ret));
+	if (ret > 0) {
+		for (int i = 0; i < ret; i++) {
+			int r = iface_get_info(&ifarray[i]);
+			CHECK_TEST(2, iface_get_info, r == 0, 1, iface_print_info(&ifarray[i], stdout));
+		}
+	}
+	}
+
+	{
+	short ret = iface_get_flags(ifname);
+	CHECK_TEST(3, iface_get_flags, ret > 0, 1, iface_print_flags(stdout, ret));
+	ret = iface_get_flags("lo");
+	CHECK_TEST(3, iface_get_flags, ret > 0, 1, iface_print_flags(stdout, ret));
+	}
+
+	{
+	char str[20] = {0};
+	short ret = iface_get_hwaddr(ifname, str, 20);
+	CHECK_TEST(4, iface_get_hwaddr, ret >= 0, 1, printf("%s: %s\n", ifname, str));
+	}
+
+	{
+	int ret = 0;
+	ret = iface_get_metric(ifname);
+	CHECK_TEST(5, iface_get_metric, ret >= 0, 1, printf("%s: metric = %d\n", ifname, ret));
+
+	ret = iface_get_mtu(ifname);
+	CHECK_TEST(5, iface_get_mtu, ret >= 0, 1, printf("%s: mtu = %d\n", ifname, ret));
+
+	ret = iface_get_txqlen(ifname);
+	CHECK_TEST(5, iface_get_txqlen, ret >= 0, 1, printf("%s: txqlen = %d\n", ifname, ret));
+
+	uint32_t ip;
+	ret = iface_get_ip(ifname, &ip);
+	char str[30] = {0};
+	CHECK_TEST(5, iface_get_ip, ret == 0, 1, printf("%s: ip = %s\n", ifname, sa_itos(ip, str, 30)));
+
+	ret = iface_get_broadaddr(ifname, &ip);
+	CHECK_TEST(5, iface_get_broadaddr, ret == 0, 1, printf("%s: broadcast = %s\n", ifname, sa_itos(ip, str, 30)));
+
+	ret = iface_get_netmask(ifname, &ip);
+	CHECK_TEST(5, iface_get_netmask, ret == 0, 1, printf("%s: netmask = %s\n", ifname, sa_itos(ip, str, 30)));
+	}
+
+	return 0;
+}
 
 int main(int argc, char **argv)
 {
@@ -68,6 +137,9 @@ int main(int argc, char **argv)
 
 	if (optTestCase == TEST_ADDR)
 		return testAddr();
+
+	if (optTestCase == TEST_IFACE)
+		return testIface();
 
 	return 0;
 }
