@@ -3,6 +3,7 @@
 
 #include "address.h"
 #include "iface.h"
+#include "multicast.h"
 
 #define CHECK_TEST(no, func, ret_check, val_check, print_val) do {\
 	if (ret_check) {\
@@ -130,6 +131,18 @@ static int testIface()
 	return 0;
 }
 
+static int testMulticast()
+{
+	{
+	struct mcast_info info[10];
+	int ret = mcast_get_list(info, 10, AF_UNSPEC);
+	CHECK_TEST(1, mcast_get_list, ret >= 0, 1, printf("entry number = %d\n", ret));
+	for (int i = 0; i < ret; i++)
+		mcast_print(&info[i], stdout);
+	}
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	parse_args(argc, argv);
@@ -140,6 +153,9 @@ int main(int argc, char **argv)
 
 	if (optTestCase == TEST_IFACE)
 		return testIface();
+
+	if (optTestCase == TEST_MULTICAST)
+		return testMulticast();
 
 	return 0;
 }
