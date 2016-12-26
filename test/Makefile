@@ -1,8 +1,9 @@
 CC=gcc
 EXEC=test
+EXEC_DYNC=test.dync
 
 DEPLIBS=../libcnetlib.a
-LIBS=$(DEPLIBS) -lpthread
+LIBS=$(DEPLIBS)
 INC=-I..
 CFLAGS=-Wall -Werror -g -O2 -std=gnu99 $(INC)
 
@@ -16,7 +17,7 @@ export
 
 .PHONY: all subdir $(SUBDIRS) clean
 
-all: subdir $(EXEC)
+all: subdir $(EXEC) $(EXEC_DYNC)
 
 -include $(SRCS:%.c=%.d)
 
@@ -42,4 +43,8 @@ $(clean_dirs):
 	$(MAKE) -C $(patsubst _clean_%,%,$@) clean
 
 clean: $(clean_dirs)
-	rm -rf $(EXEC) *.d *.o
+	rm -rf $(EXEC) $(EXEC_DYNC) *.d *.o
+
+DYNCDEP:../libcnetlib.so
+$(EXEC_DYNC): $(OBJS) $(DYNCDEP)
+	$(CC) $(OBJS) -L.. -o $(EXEC_DYNC) -lcnetlib
