@@ -4,6 +4,7 @@
 #include "address.h"
 #include "iface.h"
 #include "multicast.h"
+#include "route.h"
 
 #define CHECK_TEST(no, func, ret_check, val_check, print_val) do {\
 	if (ret_check) {\
@@ -143,6 +144,18 @@ static int testMulticast()
 	return 0;
 }
 
+static int testRoute()
+{
+	{
+	struct nl_rtentry entries[10];
+	int ret = route_get_list(entries, 10);
+	CHECK_TEST(1, route_get_list, ret >= 0, 1, printf("entry number = %d\n", ret));
+	for (int i = 0; i < ret; i++)
+		route_print_entry(&entries[i], stdout);
+	}
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	parse_args(argc, argv);
@@ -156,6 +169,9 @@ int main(int argc, char **argv)
 
 	if (optTestCase == TEST_MULTICAST)
 		return testMulticast();
+
+	if (optTestCase == TEST_ROUTE)
+		return testRoute();
 
 	return 0;
 }
