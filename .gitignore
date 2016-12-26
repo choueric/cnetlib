@@ -3,3 +3,4 @@
 *.so
 *.a
 test/test
+test/test.dync
