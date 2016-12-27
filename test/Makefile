@@ -2,16 +2,16 @@ CC=gcc
 EXEC=test
 EXEC_DYNC=test.dync
 
-DEPLIBS=../libcnetlib.a
+DEPLIBS=../src/libcnetlib.a
 LIBS=$(DEPLIBS)
-INC=-I..
+INC=-I../include
 CFLAGS=-Wall -Werror -g -O2 -std=gnu99 $(INC)
 
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:%.c=%.o)
 DEPS=$(SRCS:%.c=%.d)
 
-SUBDIRS=..
+SUBDIRS=../src
 
 export
 
@@ -47,4 +47,4 @@ clean: $(clean_dirs)
 
 DYNCDEP:../libcnetlib.so
 $(EXEC_DYNC): $(OBJS) $(DYNCDEP)
-	$(CC) $(OBJS) -L.. -o $(EXEC_DYNC) -lcnetlib
+	$(CC) $(OBJS) -L$(SUBDIRS) -o $(EXEC_DYNC) -lcnetlib
